@@ -40,4 +40,8 @@ export const getValuesFromStore = (keys: string[]) => {
   return keys.map(key => state[key])
 }
 
+export const setValueToStore = (key: string, value: any) => {
+  store.dispatch({ type: 'SET_ATOM', payload: { key, value: value } })
+}
+
 export default store

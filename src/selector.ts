@@ -1,4 +1,8 @@
-import store, { getValueFromStore, getValuesFromStore } from './store'
+import store, {
+  getValueFromStore,
+  getValuesFromStore,
+  setValueToStore,
+} from './store'
 import { RecoilValue } from './index'
 
 interface SelectorGetProps {
@@ -10,7 +14,7 @@ type SelectorGetFunction = (s: SelectorGetProps) => any
 interface SelectorSetProps {
   get: (recoilValue: RecoilValue) => any
   set: (recoilValue: RecoilValue, newValue: any) => any
-  reset: (recoilValue: RecoilValue) => any
+  // reset: (recoilValue: RecoilValue) => any
 }
 
 type SelectorSetFunction = (s: SelectorSetProps, newValue: any) => any
@@ -23,6 +27,10 @@ interface SelectorProps {
 
 const _getValueFromStore = ({ key }: RecoilValue) => {
   return getValueFromStore(key)
+}
+
+const _setValueToStore = ({ key }: RecoilValue, value: any) => {
+  setValueToStore(key, value)
 }
 
 const compareArray = (a: string[], b: string[]): boolean => {
@@ -42,7 +50,7 @@ const _AllSelector: SelectorMap = {}
 export class Selector {
   public key: string
   public get: SelectorGetFunction
-  public set?: SelectorGetFunction
+  public set?: SelectorSetFunction
 
   private dependencies: string[] = []
   private previousDependencies: string[] = []
@@ -50,6 +58,17 @@ export class Selector {
 
   private subscribe = () => {
     store.subscribe(this.update)
+  }
+
+  public setUpstreamValue = (newValue: any) => {
+    if (!this.set) {
+      console.error(
+        `You are trying to set value to a readonly selector with key ${this.key}.`,
+      )
+      return
+    }
+
+    this.set({ get: _getValueFromStore, set: _setValueToStore }, newValue)
   }
 
   private firstUpdate = () => {
@@ -84,9 +103,10 @@ export class Selector {
     }
   }
 
-  constructor({ key, get: computeValue }: SelectorProps) {
+  constructor({ key, get, set }: SelectorProps) {
     this.key = key
-    this.get = computeValue
+    this.get = get
+    this.set = set
 
     this.firstUpdate()
     this.subscribe()

@@ -6,12 +6,13 @@ A Naive [Recoil](https://github.com/facebookexperimental/Recoil) Implementation.
 
 - [x] RecoilRoot
 - [ ] Atom
-  - [ ] Lazy initialization
+  - [ ] Lazy Initialization
 - [ ] Selector
   - [x] Readonly Selector
-  - [ ] Writable Selector
+  - [x] Writable Selector
+  - [ ] Async Selector
 - [ ] Hooks
-  - [ ] useRecoilState
-  - [ ] useSetRecoilState
+  - [x] useRecoilState
+  - [x] useSetRecoilState
   - [x] useRecoilValue
   - [ ] useResetRecoilState

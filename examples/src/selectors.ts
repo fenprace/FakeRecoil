@@ -8,4 +8,8 @@ export const countIII = selector({
     const c1 = get(countI)
     return c1 + 1
   },
+  set({ set }, newValue) {
+    console.log("setting countIII's upstream")
+    set(countI, newValue - 1)
+  },
 })
