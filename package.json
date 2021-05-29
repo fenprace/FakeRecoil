@@ -1,0 +1,27 @@
+{
+  "name": "fake-recoil",
+  "version": "0.1.0",
+  "description": "A Recoil Implementation",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "snowpack dev"
+  },
+  "author": "Zhuo FENG",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^17.0.8",
+    "@types/react-dom": "^17.0.5",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.4",
+    "redux": "^4.1.0",
+    "snowpack": "^3.5.2",
+    "typescript": "^4.3.2"
+  },
+  "peerDependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.4",
+    "redux": "^4.1.0"
+  }
+}
