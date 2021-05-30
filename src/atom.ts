@@ -1,8 +1,8 @@
-import store from './store'
+import { setValueByKey } from './store'
 
 export interface AtomProps {
   key: string
-  default: any
+  default: any | (() => any)
 }
 
 interface AtomMap {
@@ -12,18 +12,24 @@ interface AtomMap {
 const _AllAtoms: AtomMap = {}
 
 export class Atom {
-  public key: string
-  public default: any
+  private _key: string
+  private _default: any
 
-  private setValue(value: any) {
-    store.dispatch({ type: 'SET_ATOM', payload: { key: this.key, value } })
+  public get key() {
+    return this._key
+  }
+
+  public get default() {
+    return this._default
   }
 
   constructor({ key, default: defaultValue }: AtomProps) {
-    this.key = key
-    this.default = defaultValue
+    this._key = key
 
-    this.setValue(defaultValue)
+    if (defaultValue instanceof Function) this._default = defaultValue()
+    else this._default = defaultValue
+
+    setValueByKey(key, this.default)
 
     _AllAtoms[key] = this
   }

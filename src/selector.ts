@@ -1,9 +1,10 @@
-import store, {
-  getValueFromStore,
-  getValuesFromStore,
-  setValueToStore,
-} from './store'
 import { RecoilValue } from './index'
+import store, {
+  getValue,
+  getValuesByKeys,
+  setValue,
+  setValueByKey,
+} from './store'
 
 interface SelectorGetProps {
   get: (recoilValue: RecoilValue) => any
@@ -25,14 +26,6 @@ interface SelectorProps {
   set?: SelectorSetFunction
 }
 
-const _getValueFromStore = ({ key }: RecoilValue) => {
-  return getValueFromStore(key)
-}
-
-const _setValueToStore = ({ key }: RecoilValue, value: any) => {
-  setValueToStore(key, value)
-}
-
 const compareArray = (a: string[], b: string[]): boolean => {
   for (let i in a) {
     if (a[i] !== b[i]) return false
@@ -48,13 +41,25 @@ interface SelectorMap {
 const _AllSelector: SelectorMap = {}
 
 export class Selector {
-  public key: string
-  public get: SelectorGetFunction
-  public set?: SelectorSetFunction
+  private _key: string
+  private _get: SelectorGetFunction
+  private _set?: SelectorSetFunction
 
   private dependencies: string[] = []
   private previousDependencies: string[] = []
   private previousValue: any
+
+  public get key() {
+    return this._key
+  }
+
+  public get get() {
+    return this._get
+  }
+
+  public get set() {
+    return this._set
+  }
 
   private subscribe = () => {
     store.subscribe(this.update)
@@ -68,13 +73,13 @@ export class Selector {
       return
     }
 
-    this.set({ get: _getValueFromStore, set: _setValueToStore }, newValue)
+    this.set({ get: getValue, set: setValue }, newValue)
   }
 
   private firstUpdate = () => {
-    const hookedGetValueFromStore = (recoilValue: RecoilValue) => {
+    const hookedGetValue = (recoilValue: RecoilValue) => {
       const { key } = recoilValue
-      const value = _getValueFromStore(recoilValue)
+      const value = getValue(recoilValue)
 
       this.dependencies.push(key)
       this.previousDependencies.push(value)
@@ -82,13 +87,13 @@ export class Selector {
       return value
     }
 
-    const value = this.get({ get: hookedGetValueFromStore })
+    const value = this.get({ get: hookedGetValue })
     this.previousValue = value
-    store.dispatch({ type: 'SET_ATOM', payload: { key: this.key, value } })
+    setValueByKey(this.key, value)
   }
 
   private update = () => {
-    const currentDependencies = getValuesFromStore(this.dependencies)
+    const currentDependencies = getValuesByKeys(this.dependencies)
     if (compareArray(this.previousDependencies, currentDependencies)) {
       this.previousDependencies = currentDependencies
       return
@@ -96,17 +101,17 @@ export class Selector {
 
     this.previousDependencies = currentDependencies
 
-    const value = this.get({ get: _getValueFromStore })
+    const value = this.get({ get: getValue })
     if (value !== this.previousValue) {
       this.previousValue = value
-      store.dispatch({ type: 'SET_ATOM', payload: { key: this.key, value } })
+      setValueByKey(this.key, value)
     }
   }
 
   constructor({ key, get, set }: SelectorProps) {
-    this.key = key
-    this.get = get
-    this.set = set
+    this._key = key
+    this._get = get
+    this._set = set
 
     this.firstUpdate()
     this.subscribe()

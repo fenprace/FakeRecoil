@@ -7,5 +7,8 @@ export const countI = atom({
 
 export const countII = atom({
   key: 'countII',
-  default: 2,
+  default: () => {
+    console.log('CountII was Initialized')
+    return 2
+  },
 })

@@ -1,4 +1,5 @@
 import { createStore } from 'redux'
+import { RecoilValue } from './index'
 
 export interface State {
   [index: string]: any
@@ -30,18 +31,26 @@ const rootReducer = (state = initialState, action: Action) => {
 
 const store = createStore(rootReducer)
 
-export const getValueFromStore = (key: string) => {
+export const getValueByKey = (key: string) => {
   const state = store.getState() as State
   return state[key]
 }
 
-export const getValuesFromStore = (keys: string[]) => {
+export const getValuesByKeys = (keys: string[]) => {
   const state = store.getState() as State
   return keys.map(key => state[key])
 }
 
-export const setValueToStore = (key: string, value: any) => {
+export const getValue = ({ key }: RecoilValue) => {
+  return getValueByKey(key)
+}
+
+export const setValueByKey = (key: string, value: any) => {
   store.dispatch({ type: 'SET_ATOM', payload: { key, value: value } })
+}
+
+export const setValue = ({ key }: RecoilValue, value: any) => {
+  setValueByKey(key, value)
 }
 
 export default store
