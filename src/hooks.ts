@@ -47,3 +47,9 @@ export const useRecoilState = <T>(
     return [getRecoilAtom(recoilValue), setRecoilAtom(recoilValue)]
   return [getRecoilSelecor(recoilValue), setRecoilSelector(recoilValue)]
 }
+
+export const isRecoilValue = (value: any): boolean => {
+  if (value instanceof Atom) return true
+  if (value instanceof Selector) return true
+  return false
+}
