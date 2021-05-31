@@ -11,7 +11,10 @@ interface RecoilRootProps {
 
 const defaultStore = createStore(recoilReducer)
 
-const RecoilRoot = ({ children, recoilReducerKey }: RecoilRootProps) => {
+const RecoilRoot: React.FC<RecoilRootProps> = ({
+  children,
+  recoilReducerKey,
+}: RecoilRootProps) => {
   if (recoilReducerKey)
     return (
       <RecoilReducerKeyContext.Provider value={recoilReducerKey}>

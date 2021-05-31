@@ -3,9 +3,9 @@ import { useRecoilState } from '../../../src'
 import { countI } from '../atoms'
 import Inc from './Inc'
 
-const CounterI = () => {
+const CounterI: React.FC = () => {
   const [count, setCount] = useRecoilState(countI)
-  console.log(`<CounterI /> was Re-rendered!`)
+  console.log('<CounterI /> was Re-rendered!')
   return (
     <>
       <h2>{count}</h2>

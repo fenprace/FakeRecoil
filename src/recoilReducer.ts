@@ -1,19 +1,24 @@
 export interface State {
-  [index: string]: any
+  [index: string]: unknown
 }
 
 const initialState: State = {}
 
-interface Action<T> {
-  type: string
-  payload?: T
+interface Payload {
+  key: string
+  value: unknown
 }
 
-export const recoilReducer = (state = initialState, action: Action<any>) => {
+interface Action {
+  type: string
+  payload?: Payload
+}
+
+export const recoilReducer = (state = initialState, action: Action): State => {
   const { type, payload } = action
 
   if (type === 'SET_ATOM') {
-    const { key, value } = payload
+    const { key, value } = payload as Payload
 
     return {
       ...state,

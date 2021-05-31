@@ -7,6 +7,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "snowpack dev",
+    "lint": "eslint --fix .",
     "test": "jest"
   },
   "author": "Zhuo FENG",
@@ -16,6 +17,10 @@
     "@types/react": "^17.0.8",
     "@types/react-dom": "^17.0.5",
     "@types/react-test-renderer": "^17.0.1",
+    "@typescript-eslint/eslint-plugin": "^4.25.0",
+    "@typescript-eslint/parser": "^4.25.0",
+    "eslint": "^7.27.0",
+    "eslint-plugin-react": "^7.24.0",
     "jest": "^27.0.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

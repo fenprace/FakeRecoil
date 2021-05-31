@@ -8,26 +8,29 @@ import { setValueByKey } from '../utils'
 import RecoilReducerKeyContext from '../components/RecoilReducerKeyContext'
 import { Store } from 'redux'
 
-type SetRecoilValueFunction = (newValue: any) => void
+type SetRecoilValueFunction<T> = (newValue: T) => void
 
 export const getRecoilAtom = <T>(
   atom: Atom<T>,
   store: Store,
   recoilReducerKey?: string,
-) => {
+): T => {
   const { key } = atom
   atom.register(store)
 
-  return useSelector<State>(state => {
+  return useSelector<State, T>(state => {
     if (recoilReducerKey) {
-      return state[recoilReducerKey][key]
+      return (state[recoilReducerKey] as State)[key] as T
     }
 
-    return state[key]
+    return state[key] as T
   })
 }
 
-export const setRecoilAtom = <T>(atom: Atom<T>, store: Store) => {
+export const setRecoilAtom = <T>(
+  atom: Atom<T>,
+  store: Store,
+): SetRecoilValueFunction<T> => {
   const { key } = atom
   atom.register(store)
 
@@ -40,16 +43,16 @@ export const getRecoilSelecor = <T>(
   selector: Selector<T>,
   store: Store,
   recoilReducerKey?: string,
-) => {
+): T => {
   const { key } = selector
   selector.register(store, recoilReducerKey)
 
-  return useSelector<State>(state => {
+  return useSelector<State, T>(state => {
     if (recoilReducerKey) {
-      return state[recoilReducerKey][key]
+      return (state[recoilReducerKey] as State)[key] as T
     }
 
-    return state[key]
+    return state[key] as T
   })
 }
 
@@ -57,7 +60,7 @@ export const setRecoilSelector = <T>(
   selector: Selector<T>,
   store: Store,
   recoilReducerKey?: string,
-) => {
+): SetRecoilValueFunction<T> => {
   const { setUpstreamValue } = selector
   selector.register(store, recoilReducerKey)
 
@@ -66,7 +69,7 @@ export const setRecoilSelector = <T>(
   }, [])
 }
 
-export const useRecoilValue = <T>(recoilValue: RecoilValue<T>) => {
+export const useRecoilValue = <T>(recoilValue: RecoilValue<T>): T => {
   const store = useStore()
   const recoilReducerKey = useContext(RecoilReducerKeyContext)
 
@@ -75,7 +78,9 @@ export const useRecoilValue = <T>(recoilValue: RecoilValue<T>) => {
   return getRecoilSelecor(recoilValue, store, recoilReducerKey)
 }
 
-export const useSetRecoilState = <T>(recoilValue: RecoilValue<T>) => {
+export const useSetRecoilState = <T>(
+  recoilValue: RecoilValue<T>,
+): SetRecoilValueFunction<T> => {
   const store = useStore()
   const recoilReducerKey = useContext(RecoilReducerKeyContext)
 
@@ -85,7 +90,7 @@ export const useSetRecoilState = <T>(recoilValue: RecoilValue<T>) => {
 
 export const useRecoilState = <T>(
   recoilValue: RecoilValue<T>,
-): [any, SetRecoilValueFunction] => {
+): [T, SetRecoilValueFunction<T>] => {
   const store = useStore()
   const recoilReducerKey = useContext(RecoilReducerKeyContext)
 
@@ -101,7 +106,7 @@ export const useRecoilState = <T>(
   ]
 }
 
-export const isRecoilValue = (value: any): boolean => {
+export const isRecoilValue = (value: unknown): boolean => {
   if (value instanceof Atom) return true
   if (value instanceof Selector) return true
   return false

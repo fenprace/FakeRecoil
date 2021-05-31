@@ -9,18 +9,18 @@ export interface AtomProps<T> {
 export class Atom<T> {
   private _default: T
   private _key: string
-  private _registered: boolean = false
+  private _registered = false
   private _store?: Store
 
-  public get key() {
+  public get key(): string {
     return this._key
   }
 
-  public get default() {
+  public get default(): T {
     return this._default
   }
 
-  public register(store: Store) {
+  public register(store: Store): void {
     if (this._registered) return
     this._registered = true
     this._store = store

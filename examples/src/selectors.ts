@@ -9,7 +9,7 @@ export const countIII = selector<number>({
     return c1 + 1
   },
   set({ set }, newValue) {
-    console.log("setting countIII's upstream")
+    console.log('setting countIII\'s upstream')
     set(countI, newValue - 1)
   },
 })

@@ -4,5 +4,5 @@ import { RecoilRoot } from '../index'
 
 it('renders correctly with children', () => {
   const tree = renderer.create(<RecoilRoot>FakeRecoil</RecoilRoot>).toJSON()
-  expect(tree).toMatchInlineSnapshot(`"FakeRecoil"`)
+  expect(tree).toMatchInlineSnapshot('"FakeRecoil"')
 })
