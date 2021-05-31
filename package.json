@@ -2,7 +2,8 @@
   "name": "fake-recoil",
   "version": "0.1.0",
   "description": "A Recoil Implementation",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "dev": "snowpack dev",

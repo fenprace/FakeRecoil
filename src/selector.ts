@@ -1,10 +1,6 @@
+import { Store } from 'redux'
 import { RecoilValue } from './index'
-import store, {
-  getValue,
-  getValuesByKeys,
-  setValue,
-  setValueByKey,
-} from './store'
+import { getValue, getValuesByKeys, setValue, setValueByKey } from './utils'
 
 interface SelectorGetProps {
   get: <T>(recoilValue: RecoilValue<T>) => T
@@ -33,20 +29,16 @@ const compareArray = (a: any[], b: any[]): boolean => {
   return true
 }
 
-interface SelectorMap {
-  [index: string]: Selector<any>
-}
-
-const _AllSelector: SelectorMap = {}
-
 export class Selector<T> {
-  private _key: string
+  private _dependencies: string[] = []
   private _get: SelectorGetFunction<T>
+  private _key: string
+  private _previousDependencies: any[] = []
+  private _previousValue: any
+  private _recoilReducerKey?: string
+  private _registered: boolean = false
   private _set?: SelectorSetFunction<T>
-
-  private dependencies: string[] = []
-  private previousDependencies: any[] = []
-  private previousValue: any
+  private _store?: Store
 
   public get key() {
     return this._key
@@ -60,8 +52,50 @@ export class Selector<T> {
     return this._set
   }
 
-  private subscribe = () => {
-    store.subscribe(this.update)
+  private _getValue = <T>(recoilValue: RecoilValue<T>) => {
+    return getValue(recoilValue, this._store, this._recoilReducerKey)
+  }
+
+  private _setValue = <T>(recoilValue: RecoilValue<T>, newValue: T) => {
+    setValue(recoilValue, newValue, this._store)
+  }
+
+  private _hookedGetValue = (recoilValue: RecoilValue<any>) => {
+    const { key } = recoilValue
+    const value = this._getValue(recoilValue)
+
+    this._dependencies.push(key)
+    this._previousDependencies.push(value)
+
+    return value
+  }
+
+  private _firstUpdate = () => {
+    const value = this.get({ get: this._hookedGetValue })
+    this._previousValue = value
+
+    setValueByKey(this.key, value, this._store)
+  }
+
+  private _update = () => {
+    const currentDependencies = getValuesByKeys(
+      this._dependencies,
+      this._store,
+      this._recoilReducerKey,
+    )
+
+    if (compareArray(this._previousDependencies, currentDependencies)) {
+      this._previousDependencies = currentDependencies
+      return
+    }
+
+    this._previousDependencies = currentDependencies
+
+    const value = this.get({ get: this._getValue })
+    if (value !== this._previousValue) {
+      this._previousValue = value
+      setValueByKey(this.key, value, this._store)
+    }
   }
 
   public setUpstreamValue = (newValue: any) => {
@@ -72,56 +106,27 @@ export class Selector<T> {
       return
     }
 
-    this.set({ get: getValue, set: setValue }, newValue)
+    this.set({ get: this._getValue, set: this._setValue }, newValue)
   }
 
-  private firstUpdate = () => {
-    const hookedGetValue = (recoilValue: RecoilValue<any>) => {
-      const { key } = recoilValue
-      const value = getValue(recoilValue)
+  public register(store: Store, recoilReducerKey?: string) {
+    if (this._registered) return
 
-      this.dependencies.push(key)
-      this.previousDependencies.push(value)
+    this._registered = true
+    this._store = store
+    this._recoilReducerKey = recoilReducerKey
 
-      return value
-    }
-
-    const value = this.get({ get: hookedGetValue })
-    this.previousValue = value
-    setValueByKey(this.key, value)
-  }
-
-  private update = () => {
-    const currentDependencies = getValuesByKeys<any>(this.dependencies)
-    if (compareArray(this.previousDependencies, currentDependencies)) {
-      this.previousDependencies = currentDependencies
-      return
-    }
-
-    this.previousDependencies = currentDependencies
-
-    const value = this.get({ get: getValue })
-    if (value !== this.previousValue) {
-      this.previousValue = value
-      setValueByKey(this.key, value)
-    }
+    this._firstUpdate()
+    this._store.subscribe(this._update)
   }
 
   constructor({ key, get, set }: SelectorProps<T>) {
     this._key = key
     this._get = get
     this._set = set
-
-    this.firstUpdate()
-    this.subscribe()
-
-    _AllSelector[key] = this
   }
 }
 
 export const selector = <T>(props: SelectorProps<T>) => {
-  const { key } = props
-
-  if (_AllSelector[key]) return _AllSelector[key]
   return new Selector<T>(props)
 }

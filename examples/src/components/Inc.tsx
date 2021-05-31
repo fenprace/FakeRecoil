@@ -1,5 +1,5 @@
 import React from 'react'
-import { useRecoilState } from '../../src'
+import { useRecoilState } from '../../../src'
 
 interface IncProps {
   atom: any

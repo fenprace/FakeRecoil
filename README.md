@@ -31,7 +31,7 @@ WIP...
   - [ ] useResetRecoilState()
 - [x] IsRecoilValue()
 - [ ] Unit Tests
-- [ ] Support multiple & nested `<RecoilRoot />`s
+- [x] Support multiple & nested `<RecoilRoot />`s
 
 ## Possibly will do, one day in the future...
 
