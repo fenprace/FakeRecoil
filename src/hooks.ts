@@ -7,11 +7,11 @@ import store, { State } from './store'
 
 type SetRecoilValueFunction = (newValue: any) => void
 
-export const getRecoilAtom = ({ key }: Atom) => {
-  return useSelector<State>(state => state[key])
+export const getRecoilAtom = <T>({ key }: Atom<T>) => {
+  return useSelector<State<any>>(state => state[key])
 }
 
-export const setRecoilAtom = ({ key }: Atom) => {
+export const setRecoilAtom = <T>({ key }: Atom<T>) => {
   return useCallback(
     newValue => {
       store.dispatch({ type: 'SET_ATOM', payload: { key, value: newValue } })
@@ -20,28 +20,28 @@ export const setRecoilAtom = ({ key }: Atom) => {
   )
 }
 
-export const getRecoilSelecor = ({ key }: Selector) => {
-  return useSelector<State>(state => state[key])
+export const getRecoilSelecor = <T>({ key }: Selector<T>) => {
+  return useSelector<State<any>>(state => state[key])
 }
 
-export const setRecoilSelector = ({ setUpstreamValue }: Selector) => {
+export const setRecoilSelector = <T>({ setUpstreamValue }: Selector<T>) => {
   return useCallback(newValue => {
     setUpstreamValue(newValue)
   }, [])
 }
 
-export const useRecoilValue = (recoilValue: RecoilValue) => {
+export const useRecoilValue = <T>(recoilValue: RecoilValue<T>) => {
   if (recoilValue instanceof Atom) return getRecoilAtom(recoilValue)
   return getRecoilSelecor(recoilValue)
 }
 
-export const useSetRecoilState = (recoilValue: RecoilValue) => {
+export const useSetRecoilState = <T>(recoilValue: RecoilValue<T>) => {
   if (recoilValue instanceof Atom) return setRecoilAtom(recoilValue)
   return setRecoilSelector(recoilValue)
 }
 
-export const useRecoilState = (
-  recoilValue: RecoilValue,
+export const useRecoilState = <T>(
+  recoilValue: RecoilValue<T>,
 ): [any, SetRecoilValueFunction] => {
   if (recoilValue instanceof Atom)
     return [getRecoilAtom(recoilValue), setRecoilAtom(recoilValue)]

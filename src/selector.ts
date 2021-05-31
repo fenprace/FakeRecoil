@@ -7,26 +7,25 @@ import store, {
 } from './store'
 
 interface SelectorGetProps {
-  get: (recoilValue: RecoilValue) => any
+  get: <T>(recoilValue: RecoilValue<T>) => T
 }
 
-type SelectorGetFunction = (s: SelectorGetProps) => any
-
 interface SelectorSetProps {
-  get: (recoilValue: RecoilValue) => any
-  set: (recoilValue: RecoilValue, newValue: any) => any
+  get: <T>(recoilValue: RecoilValue<T>) => T
+  set: <T>(recoilValue: RecoilValue<T>, newValue: T) => void
   // reset: (recoilValue: RecoilValue) => any
 }
 
-type SelectorSetFunction = (s: SelectorSetProps, newValue: any) => any
+type SelectorGetFunction<T> = (s: SelectorGetProps) => T
+type SelectorSetFunction<T> = (s: SelectorSetProps, newValue: T) => void
 
-interface SelectorProps {
+interface SelectorProps<T> {
   key: string
-  get: SelectorGetFunction
-  set?: SelectorSetFunction
+  get: SelectorGetFunction<T>
+  set?: SelectorSetFunction<T>
 }
 
-const compareArray = (a: string[], b: string[]): boolean => {
+const compareArray = (a: any[], b: any[]): boolean => {
   for (let i in a) {
     if (a[i] !== b[i]) return false
   }
@@ -35,18 +34,18 @@ const compareArray = (a: string[], b: string[]): boolean => {
 }
 
 interface SelectorMap {
-  [index: string]: Selector
+  [index: string]: Selector<any>
 }
 
 const _AllSelector: SelectorMap = {}
 
-export class Selector {
+export class Selector<T> {
   private _key: string
-  private _get: SelectorGetFunction
-  private _set?: SelectorSetFunction
+  private _get: SelectorGetFunction<T>
+  private _set?: SelectorSetFunction<T>
 
   private dependencies: string[] = []
-  private previousDependencies: string[] = []
+  private previousDependencies: any[] = []
   private previousValue: any
 
   public get key() {
@@ -77,7 +76,7 @@ export class Selector {
   }
 
   private firstUpdate = () => {
-    const hookedGetValue = (recoilValue: RecoilValue) => {
+    const hookedGetValue = (recoilValue: RecoilValue<any>) => {
       const { key } = recoilValue
       const value = getValue(recoilValue)
 
@@ -93,7 +92,7 @@ export class Selector {
   }
 
   private update = () => {
-    const currentDependencies = getValuesByKeys(this.dependencies)
+    const currentDependencies = getValuesByKeys<any>(this.dependencies)
     if (compareArray(this.previousDependencies, currentDependencies)) {
       this.previousDependencies = currentDependencies
       return
@@ -108,7 +107,7 @@ export class Selector {
     }
   }
 
-  constructor({ key, get, set }: SelectorProps) {
+  constructor({ key, get, set }: SelectorProps<T>) {
     this._key = key
     this._get = get
     this._set = set
@@ -120,9 +119,9 @@ export class Selector {
   }
 }
 
-export const selector = (props: SelectorProps) => {
+export const selector = <T>(props: SelectorProps<T>) => {
   const { key } = props
 
   if (_AllSelector[key]) return _AllSelector[key]
-  return new Selector(props)
+  return new Selector<T>(props)
 }

@@ -1,7 +1,7 @@
 import { selector } from '../../src'
 import { countI } from './atoms'
 
-export const countIII = selector({
+export const countIII = selector<number>({
   key: 'countIII',
   get({ get }) {
     console.log('countIII was computed!')
