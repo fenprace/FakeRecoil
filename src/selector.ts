@@ -1,6 +1,12 @@
 import { Store } from 'redux'
 import { RecoilValue } from './index'
-import { getValue, getValuesByKeys, setValue, setValueByKey } from './utils'
+import {
+  compareArray,
+  getValue,
+  getValuesByKeys,
+  setValue,
+  setValueByKey,
+} from './utils'
 
 interface SelectorGetProps {
   get: <T>(recoilValue: RecoilValue<T>) => T
@@ -19,14 +25,6 @@ interface SelectorProps<T> {
   key: string
   get: SelectorGetFunction<T>
   set?: SelectorSetFunction<T>
-}
-
-const compareArray = (a: unknown[], b: unknown[]): boolean => {
-  for (const i in a) {
-    if (a[i] !== b[i]) return false
-  }
-
-  return true
 }
 
 export class Selector<T> {
@@ -53,10 +51,12 @@ export class Selector<T> {
   }
 
   private _getValue = <U>(recoilValue: RecoilValue<U>) => {
+    recoilValue.register(this._store as Store, this._recoilReducerKey)
     return getValue(recoilValue, this._store as Store, this._recoilReducerKey)
   }
 
   private _setValue = <U>(recoilValue: RecoilValue<U>, newValue: U) => {
+    recoilValue.register(this._store as Store, this._recoilReducerKey)
     setValue(recoilValue, newValue, this._store as Store)
   }
 

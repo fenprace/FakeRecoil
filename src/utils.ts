@@ -2,6 +2,14 @@ import { State } from './recoilReducer'
 import { RecoilValue } from './index'
 import { Store } from 'redux'
 
+export const compareArray = (a: unknown[], b: unknown[]): boolean => {
+  for (const i in a) {
+    if (a[i] !== b[i]) return false
+  }
+
+  return true
+}
+
 export const getValueByKey = <T>(
   key: string,
   store: Store,

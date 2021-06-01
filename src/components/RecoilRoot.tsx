@@ -1,15 +1,12 @@
 import React from 'react'
 import { Provider } from 'react-redux'
-import { createStore } from 'redux'
-import { recoilReducer } from '../recoilReducer'
+import recoilDefaultStore from '../recoilDefaultStore'
 import RecoilReducerKeyContext from './RecoilReducerKeyContext'
 
 interface RecoilRootProps {
   children: React.ReactNode
   recoilReducerKey?: string
 }
-
-const defaultStore = createStore(recoilReducer)
 
 const RecoilRoot: React.FC<RecoilRootProps> = ({
   children,
@@ -22,7 +19,7 @@ const RecoilRoot: React.FC<RecoilRootProps> = ({
       </RecoilReducerKeyContext.Provider>
     )
 
-  return <Provider store={defaultStore}>{children}</Provider>
+  return <Provider store={recoilDefaultStore}>{children}</Provider>
 }
 
 export default RecoilRoot

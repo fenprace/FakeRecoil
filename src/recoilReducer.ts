@@ -9,7 +9,7 @@ interface Payload {
   value: unknown
 }
 
-interface Action {
+export interface Action {
   type: string
   payload?: Payload
 }
