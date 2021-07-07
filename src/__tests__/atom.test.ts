@@ -1,4 +1,4 @@
-import { createRecoilStore } from '../recoilDefaultStore'
+import { createRecoilStore } from '../redux/defaultStore'
 import { atom, Atom } from '../atom'
 
 describe('test atom()', () => {
@@ -11,6 +11,40 @@ describe('test atom()', () => {
     expect(testAtom instanceof Atom).toBe(true)
     expect(testAtom.key).toBe('test')
     expect(testAtom.default).toBe(3)
+  })
+
+  it('test register()', () => {
+    const store = createRecoilStore()
+
+    const testAtom = atom({
+      key: 'test',
+      default: 3,
+    })
+
+    expect(store.getState()).toEqual({})
+
+    testAtom.register(store)
+
+    expect(store.getState()).toEqual({ test: 3 })
+  })
+
+  it('test get and set value', () => {
+    const store = createRecoilStore()
+
+    const testAtom = atom({
+      key: 'test',
+      default: 3,
+    })
+
+    expect(testAtom.key).toEqual('test')
+    expect(testAtom.default).toEqual(3)
+
+    testAtom.register(store)
+
+    expect(testAtom.getValue()).toEqual(3)
+
+    testAtom.setValue(4)
+    expect(testAtom.getValue()).toEqual(4)
   })
 
   it('initialize callback shall only be executed once', () => {
@@ -27,18 +61,22 @@ describe('test atom()', () => {
     expect(initCb.mock.calls.length).toBe(1)
   })
 
-  it('test register()', () => {
+  it('test atom with initialize callback', () => {
     const store = createRecoilStore()
 
     const testAtom = atom({
       key: 'test',
-      default: 3,
+      default: () => 3,
     })
 
-    expect(store.getState()).toEqual({})
+    expect(testAtom.key).toEqual('test')
+    expect(testAtom.default).toEqual(3)
 
     testAtom.register(store)
 
-    expect(store.getState()).toEqual({ test: 3 })
+    expect(testAtom.getValue()).toEqual(3)
+
+    testAtom.setValue(4)
+    expect(testAtom.getValue()).toEqual(4)
   })
 })
