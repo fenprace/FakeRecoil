@@ -14,7 +14,7 @@ export interface Action {
   payload?: Payload
 }
 
-export const recoilReducer = (state = initialState, action: Action): State => {
+export const reducer = (state = initialState, action: Action): State => {
   const { type, payload } = action
 
   if (type === 'SET_ATOM') {

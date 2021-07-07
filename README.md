@@ -10,10 +10,6 @@ A Naive [Recoil](https://github.com/facebookexperimental/Recoil) Implementation.
 
 This implementation relies on `redux` & `react-redux` packages for global state management.
 
-### Integrate with current redux store
-
-WIP...
-
 ## TODOs
 
 - [ ] RecoilRoot

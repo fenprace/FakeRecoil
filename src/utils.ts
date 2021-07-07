@@ -1,6 +1,6 @@
-import { State } from './recoilReducer'
-import { RecoilValue } from './index'
 import { Store } from 'redux'
+import { RecoilValue } from './index'
+import { State } from './redux/reducer'
 
 export const compareArray = (a: unknown[], b: unknown[]): boolean => {
   for (const i in a) {
@@ -10,33 +10,18 @@ export const compareArray = (a: unknown[], b: unknown[]): boolean => {
   return true
 }
 
-export const getValueByKey = <T>(
-  key: string,
-  store: Store,
-  recoilReducerKey?: string,
-): T => {
+export const getValueByKey = <T>(key: string, store: Store): T => {
   const state = store.getState() as State
-  if (recoilReducerKey) return (state[recoilReducerKey] as State)[key] as T
   return state[key] as T
 }
 
-export const getValuesByKeys = (
-  keys: string[],
-  store: Store,
-  recoilReducerKey?: string,
-): unknown[] => {
+export const getValuesByKeys = (keys: string[], store: Store): unknown[] => {
   const state = store.getState() as State
-  if (recoilReducerKey)
-    return keys.map(key => (state[recoilReducerKey] as State)[key])
   return keys.map(key => state[key])
 }
 
-export const getValue = <T>(
-  { key }: RecoilValue<T>,
-  store: Store,
-  recoilReducerKey?: string,
-): T => {
-  return getValueByKey(key, store, recoilReducerKey)
+export const getValue = <T>({ key }: RecoilValue<T>, store: Store): T => {
+  return getValueByKey(key, store)
 }
 
 export const setValueByKey = <T>(key: string, value: T, store: Store): void => {

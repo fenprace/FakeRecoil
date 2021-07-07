@@ -6,7 +6,7 @@ import {
   useRecoilValue,
   useSetRecoilState,
 } from './hooks'
-import { recoilReducer } from './recoilReducer'
+import { reducer as recoilReducer } from './redux/reducer'
 import { selector, Selector } from './selector'
 
 export type RecoilValue<T> = Atom<T> | Selector<T>

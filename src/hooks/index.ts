@@ -1,108 +1,56 @@
-import { useCallback, useContext } from 'react'
+import { useCallback } from 'react'
 import { useSelector, useStore } from 'react-redux'
+import { Store } from 'redux'
 import { Atom } from '../atom'
 import { RecoilValue } from '../index'
+import { State } from '../redux/reducer'
 import { Selector } from '../selector'
-import { State } from '../recoilReducer'
-import { setValueByKey } from '../utils'
-import RecoilReducerKeyContext from '../components/RecoilReducerKeyContext'
-import { Store } from 'redux'
 
 type SetRecoilValueFunction<T> = (newValue: T) => void
 
-export const getRecoilAtom = <T>(
-  atom: Atom<T>,
+export const getRecoilValue = <T>(
+  recoilValue: RecoilValue<T>,
   store: Store,
-  recoilReducerKey?: string,
 ): T => {
-  const { key } = atom
-  atom.register(store)
+  const { key } = recoilValue
+  recoilValue.register(store)
 
   return useSelector<State, T>(state => {
-    if (recoilReducerKey) {
-      return (state[recoilReducerKey] as State)[key] as T
-    }
-
     return state[key] as T
   })
 }
 
-export const setRecoilAtom = <T>(
-  atom: Atom<T>,
+export const setRecoilValue = <T>(
+  recoilValue: RecoilValue<T>,
   store: Store,
 ): SetRecoilValueFunction<T> => {
-  const { key } = atom
-  atom.register(store)
+  recoilValue.register(store)
 
   return useCallback(value => {
-    setValueByKey(key, value, store)
-  }, [])
-}
-
-export const getRecoilSelecor = <T>(
-  selector: Selector<T>,
-  store: Store,
-  recoilReducerKey?: string,
-): T => {
-  const { key } = selector
-  selector.register(store, recoilReducerKey)
-
-  return useSelector<State, T>(state => {
-    if (recoilReducerKey) {
-      return (state[recoilReducerKey] as State)[key] as T
-    }
-
-    return state[key] as T
-  })
-}
-
-export const setRecoilSelector = <T>(
-  selector: Selector<T>,
-  store: Store,
-  recoilReducerKey?: string,
-): SetRecoilValueFunction<T> => {
-  const { setUpstreamValue } = selector
-  selector.register(store, recoilReducerKey)
-
-  return useCallback(value => {
-    setUpstreamValue(value)
+    recoilValue.setValue(value)
   }, [])
 }
 
 export const useRecoilValue = <T>(recoilValue: RecoilValue<T>): T => {
   const store = useStore()
-  const recoilReducerKey = useContext(RecoilReducerKeyContext)
-
-  if (recoilValue instanceof Atom)
-    return getRecoilAtom(recoilValue, store, recoilReducerKey)
-  return getRecoilSelecor(recoilValue, store, recoilReducerKey)
+  return getRecoilValue(recoilValue, store)
 }
 
 export const useSetRecoilState = <T>(
   recoilValue: RecoilValue<T>,
 ): SetRecoilValueFunction<T> => {
   const store = useStore()
-  const recoilReducerKey = useContext(RecoilReducerKeyContext)
-
-  if (recoilValue instanceof Atom) return setRecoilAtom(recoilValue, store)
-  return setRecoilSelector(recoilValue, store, recoilReducerKey)
+  return setRecoilValue(recoilValue, store)
 }
 
 export const useRecoilState = <T>(
   recoilValue: RecoilValue<T>,
 ): [T, SetRecoilValueFunction<T>] => {
   const store = useStore()
-  const recoilReducerKey = useContext(RecoilReducerKeyContext)
-
-  if (recoilValue instanceof Atom)
-    return [
-      getRecoilAtom(recoilValue, store, recoilReducerKey),
-      setRecoilAtom(recoilValue, store),
-    ]
 
   return [
-    getRecoilSelecor(recoilValue, store, recoilReducerKey),
-    setRecoilSelector(recoilValue, store, recoilReducerKey),
+    getRecoilValue(recoilValue, store),
+    setRecoilValue(recoilValue, store),
   ]
 }
 

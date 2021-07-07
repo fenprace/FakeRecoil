@@ -1,5 +1,5 @@
 import { Store } from 'redux'
-import { setValueByKey } from './utils'
+import { getValueByKey, setValueByKey } from './utils'
 
 export interface AtomProps<T> {
   key: string
@@ -26,6 +26,14 @@ export class Atom<T> {
     this._store = store
 
     setValueByKey(this._key, this.default, this._store)
+  }
+
+  public getValue(): T {
+    return getValueByKey(this._key, this._store as Store)
+  }
+
+  public setValue(value: T): void {
+    setValueByKey(this._key, value, this._store as Store)
   }
 
   constructor({ key, default: defaultValue }: AtomProps<T>) {

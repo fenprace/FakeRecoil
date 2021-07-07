@@ -3,6 +3,7 @@ import { RecoilValue } from './index'
 import {
   compareArray,
   getValue,
+  getValueByKey,
   getValuesByKeys,
   setValue,
   setValueByKey,
@@ -28,12 +29,11 @@ interface SelectorProps<T> {
 }
 
 export class Selector<T> {
-  private _dependencies: string[] = []
+  private _dependencies: string[] = [] // Keys of dependencies
   private _get: SelectorGetFunction<T>
   private _key: string
-  private _previousDependencies: unknown[] = []
-  private _previousValue: unknown
-  private _recoilReducerKey?: string
+  private _previousDependencies: unknown[] = [] // Values of dependencies
+  private _previousValue: unknown // Previous value of this selector
   private _registered = false
   private _set?: SelectorSetFunction<T>
   private _store?: Store
@@ -50,19 +50,19 @@ export class Selector<T> {
     return this._set
   }
 
-  private _getValue = <U>(recoilValue: RecoilValue<U>) => {
-    recoilValue.register(this._store as Store, this._recoilReducerKey)
-    return getValue(recoilValue, this._store as Store, this._recoilReducerKey)
+  private _getUpstreamValue = <U>(recoilValue: RecoilValue<U>) => {
+    recoilValue.register(this._store as Store)
+    return getValue(recoilValue, this._store as Store)
   }
 
-  private _setValue = <U>(recoilValue: RecoilValue<U>, newValue: U) => {
-    recoilValue.register(this._store as Store, this._recoilReducerKey)
+  private _setUpstreamValue = <U>(recoilValue: RecoilValue<U>, newValue: U) => {
+    recoilValue.register(this._store as Store)
     setValue(recoilValue, newValue, this._store as Store)
   }
 
   private _hookedGetValue = <U>(recoilValue: RecoilValue<U>) => {
     const { key } = recoilValue
-    const value = this._getValue(recoilValue)
+    const value = this._getUpstreamValue(recoilValue)
 
     this._dependencies.push(key)
     this._previousDependencies.push(value)
@@ -86,11 +86,7 @@ export class Selector<T> {
       return
     }
 
-    const currentDependencies = getValuesByKeys(
-      this._dependencies,
-      this._store,
-      this._recoilReducerKey,
-    )
+    const currentDependencies = getValuesByKeys(this._dependencies, this._store)
 
     if (compareArray(this._previousDependencies, currentDependencies)) {
       this._previousDependencies = currentDependencies
@@ -99,14 +95,18 @@ export class Selector<T> {
 
     this._previousDependencies = currentDependencies
 
-    const value = this.get({ get: this._getValue })
+    const value = this.get({ get: this._getUpstreamValue })
     if (value !== this._previousValue) {
       this._previousValue = value
       setValueByKey(this.key, value, this._store)
     }
   }
 
-  public setUpstreamValue = (newValue: T): void => {
+  public getValue(): T {
+    return getValueByKey(this._key, this._store as Store)
+  }
+
+  public setValue = (newValue: T): void => {
     if (!this.set) {
       console.error(
         `You are trying to set value to a readonly selector with key ${this.key}.`,
@@ -114,15 +114,17 @@ export class Selector<T> {
       return
     }
 
-    this.set({ get: this._getValue, set: this._setValue }, newValue)
+    this.set(
+      { get: this._getUpstreamValue, set: this._setUpstreamValue },
+      newValue,
+    )
   }
 
-  public register(store: Store, recoilReducerKey?: string): void {
+  public register(store: Store): void {
     if (this._registered) return
 
     this._registered = true
     this._store = store
-    this._recoilReducerKey = recoilReducerKey
 
     this._firstUpdate()
     this._store.subscribe(this._update)
