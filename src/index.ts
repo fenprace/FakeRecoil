@@ -4,6 +4,7 @@ import {
   isRecoilValue,
   useRecoilState,
   useRecoilValue,
+  useResetRecoilState,
   useSetRecoilState,
 } from './hooks'
 import { reducer as recoilReducer } from './redux/reducer'
@@ -19,5 +20,6 @@ export {
   selector,
   useRecoilState,
   useRecoilValue,
+  useResetRecoilState,
   useSetRecoilState,
 }

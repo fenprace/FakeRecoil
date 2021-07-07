@@ -15,19 +15,20 @@ This implementation relies on `redux` & `react-redux` packages for global state 
 - [ ] RecoilRoot
   - [ ] initializeState
   - [ ] override
+  - [ ] Support multiple & nested `<RecoilRoot />`s
 - [x] Atom
   - [x] Lazy Initialization
 - [ ] Selector
   - [x] Readonly Selector
   - [x] Writable Selector
-- [ ] Hooks
+  - [x] Reset Selector
+- [x] Hooks
   - [x] useRecoilState()
   - [x] useSetRecoilState()
   - [x] useRecoilValue()
-  - [ ] useResetRecoilState()
+  - [x] useResetRecoilState()
 - [x] IsRecoilValue()
 - [ ] Unit Tests
-- [x] Support multiple & nested `<RecoilRoot />`s
 
 ## Possibly will do, one day in the future...
 

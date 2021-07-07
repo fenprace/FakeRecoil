@@ -36,6 +36,10 @@ export class Atom<T> {
     setValueByKey(this._key, value, this._store as Store)
   }
 
+  public resetValue(): void {
+    setValueByKey(this._key, this.default, this._store as Store)
+  }
+
   constructor({ key, default: defaultValue }: AtomProps<T>) {
     this._key = key
 

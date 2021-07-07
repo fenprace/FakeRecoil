@@ -16,7 +16,7 @@ interface SelectorGetProps {
 interface SelectorSetProps {
   get: <T>(recoilValue: RecoilValue<T>) => T
   set: <T>(recoilValue: RecoilValue<T>, newValue: T) => void
-  // reset: (recoilValue: RecoilValue) => any
+  reset: <T>(recoilValue: RecoilValue<T>) => void
 }
 
 type SelectorGetFunction<T> = (s: SelectorGetProps) => T
@@ -60,7 +60,23 @@ export class Selector<T> {
     setValue(recoilValue, newValue, this._store as Store)
   }
 
-  private _hookedGetValue = <U>(recoilValue: RecoilValue<U>) => {
+  private _resetUpstreamValue = <U>(recoilValue: RecoilValue<U>) => {
+    recoilValue.register(this._store as Store)
+    recoilValue.resetValue()
+  }
+
+  private _hookedGetValueForUpdate = <U>(recoilValue: RecoilValue<U>) => {
+    const { key } = recoilValue
+    const value = this._getUpstreamValue(recoilValue)
+
+    this._dependencies.push(key)
+    this._previousDependencies.push(value)
+
+    return value
+  }
+
+  private _hookedGetValueForReset = <U>(recoilValue: RecoilValue<U>) => {
+    recoilValue.resetValue()
     const { key } = recoilValue
     const value = this._getUpstreamValue(recoilValue)
 
@@ -71,7 +87,17 @@ export class Selector<T> {
   }
 
   private _firstUpdate = () => {
-    const value = this.get({ get: this._hookedGetValue })
+    const value = this.get({ get: this._hookedGetValueForUpdate })
+    this._previousValue = value
+
+    setValueByKey(this.key, value, this._store as Store)
+  }
+
+  private _resetUpdate = () => {
+    this._dependencies = []
+    this._previousDependencies = []
+
+    const value = this.get({ get: this._hookedGetValueForReset })
     this._previousValue = value
 
     setValueByKey(this.key, value, this._store as Store)
@@ -115,9 +141,17 @@ export class Selector<T> {
     }
 
     this.set(
-      { get: this._getUpstreamValue, set: this._setUpstreamValue },
+      {
+        get: this._getUpstreamValue,
+        set: this._setUpstreamValue,
+        reset: this._resetUpstreamValue,
+      },
       newValue,
     )
+  }
+
+  public resetValue = (): void => {
+    this._resetUpdate()
   }
 
   public register(store: Store): void {

@@ -31,6 +31,17 @@ export const setRecoilValue = <T>(
   }, [])
 }
 
+export const resetRecoilValue = <T>(
+  recoilValue: RecoilValue<T>,
+  store: Store,
+): (() => void) => {
+  recoilValue.register(store)
+
+  return useCallback(() => {
+    recoilValue.resetValue()
+  }, [])
+}
+
 export const useRecoilValue = <T>(recoilValue: RecoilValue<T>): T => {
   const store = useStore()
   return getRecoilValue(recoilValue, store)
@@ -52,6 +63,13 @@ export const useRecoilState = <T>(
     getRecoilValue(recoilValue, store),
     setRecoilValue(recoilValue, store),
   ]
+}
+
+export const useResetRecoilState = <T>(
+  recoilValue: RecoilValue<T>,
+): (() => void) => {
+  const store = useStore()
+  return resetRecoilValue(recoilValue, store)
 }
 
 export const isRecoilValue = (value: unknown): boolean => {
