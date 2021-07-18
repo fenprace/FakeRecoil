@@ -1,79 +1,24 @@
-import { useCallback } from 'react'
-import { useSelector, useStore } from 'react-redux'
-import { Store } from 'redux'
-import { Atom } from '../atom'
-import { RecoilValue } from '../index'
-import { State } from '../redux/reducer'
-import { Selector } from '../selector'
+import { useContext } from 'react'
+import RecoilContext from '../context'
+import RecoilStore from '../store'
+import { RecoilValue, Setter } from '../types'
 
-type SetRecoilValueFunction<T> = (newValue: T) => void
-
-export const getRecoilValue = <T>(
-  recoilValue: RecoilValue<T>,
-  store: Store,
-): T => {
-  const { key } = recoilValue
-  recoilValue.register(store)
-
-  return useSelector<State, T>(state => {
-    return state[key] as T
-  })
+export const useRecoilStore = (): RecoilStore => {
+  return useContext(RecoilContext).current
 }
 
-export const setRecoilValue = <T>(
-  recoilValue: RecoilValue<T>,
-  store: Store,
-): SetRecoilValueFunction<T> => {
-  recoilValue.register(store)
-
-  return useCallback(value => {
-    recoilValue.setValue(value)
-  }, [])
+export const useRecoilValue = <T>(rv: RecoilValue<T>): T => {
+  const store = useRecoilStore()
+  return store.useValue(rv)
 }
 
-export const resetRecoilValue = <T>(
-  recoilValue: RecoilValue<T>,
-  store: Store,
-): (() => void) => {
-  recoilValue.register(store)
-
-  return useCallback(() => {
-    recoilValue.resetValue()
-  }, [])
+export const useSetRecoilState = <T>(rv: RecoilValue<T>): Setter<T> => {
+  const store = useRecoilStore()
+  return store.useSetter(rv)
 }
 
-export const useRecoilValue = <T>(recoilValue: RecoilValue<T>): T => {
-  const store = useStore()
-  return getRecoilValue(recoilValue, store)
-}
-
-export const useSetRecoilState = <T>(
-  recoilValue: RecoilValue<T>,
-): SetRecoilValueFunction<T> => {
-  const store = useStore()
-  return setRecoilValue(recoilValue, store)
-}
-
-export const useRecoilState = <T>(
-  recoilValue: RecoilValue<T>,
-): [T, SetRecoilValueFunction<T>] => {
-  const store = useStore()
-
-  return [
-    getRecoilValue(recoilValue, store),
-    setRecoilValue(recoilValue, store),
-  ]
-}
-
-export const useResetRecoilState = <T>(
-  recoilValue: RecoilValue<T>,
-): (() => void) => {
-  const store = useStore()
-  return resetRecoilValue(recoilValue, store)
-}
-
-export const isRecoilValue = (value: unknown): boolean => {
-  if (value instanceof Atom) return true
-  if (value instanceof Selector) return true
-  return false
+export const useRecoilState = <T>(rv: RecoilValue<T>): [T, Setter<T>] => {
+  const value = useRecoilValue(rv)
+  const setValue = useSetRecoilState(rv)
+  return [value, setValue]
 }
