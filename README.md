@@ -4,9 +4,11 @@
 
 A Naive [Recoil](https://github.com/facebookexperimental/Recoil) Implementation.
 
-## Getting Started
+## Installation
 
-WIP...
+```
+npm i --save-dev fake-recoil
+```
 
 ## Features
 

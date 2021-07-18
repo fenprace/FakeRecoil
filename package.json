@@ -1,11 +1,12 @@
 {
   "name": "fake-recoil",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Naive Recoil Implementation",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "rimraf ./dist && tsc --build",
+    "clean": "rimraf ./dist",
     "lint": "eslint --fix .",
     "test": "jest"
   },
@@ -24,6 +25,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-test-renderer": "^17.0.2",
+    "rimraf": "^3.0.2",
     "ts-jest": "^27.0.2",
     "typescript": "^4.3.2"
   },
