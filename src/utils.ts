@@ -23,4 +23,8 @@ export const selector = <T>(props: SelectorProps<T>): Selector<T> => {
   return { ...props, type: RecoilValueType.SELECTOR }
 }
 
+export const isRecoilValue = (value: any): boolean => {
+  return !!(value?.type && (isAtom(value) || isSelector(value)))
+}
+
 export const EMPTY = Symbol()

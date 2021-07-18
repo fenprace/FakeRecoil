@@ -2,12 +2,12 @@
 end_of_line = lf
 insert_final_newline = true
 
-[*.{js, jsx, ts, tsx}]
+[*.{js,jsx,ts,tsx}]
 charset = utf-8
 indent_size = 2
 indent_style = space
 
-[*.{html, json, yaml, css}]
+[*.{html,json,yaml,css}]
 charset = utf-8
 indent_size = 2
 indent_style = space

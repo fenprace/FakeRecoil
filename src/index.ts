@@ -1,12 +1,13 @@
+import { useRecoilState, useRecoilValue, useSetRecoilState } from './hooks'
 import RecoilRoot from './RecoilRoot'
-import { useRecoilValue, useRecoilState, useSetRecoilState } from './hooks'
-import { atom, selector } from './utils'
+import { atom, isRecoilValue, selector } from './utils'
 
 export {
-  RecoilRoot,
-  useRecoilValue,
   atom,
+  isRecoilValue,
+  RecoilRoot,
   selector,
-  useSetRecoilState,
   useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
 }

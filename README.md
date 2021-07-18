@@ -6,27 +6,22 @@ A Naive [Recoil](https://github.com/facebookexperimental/Recoil) Implementation.
 
 ## Getting Started
 
-### Dependency
-
-This implementation relies on `redux` & `react-redux` packages for global state management.
-
 ## TODOs
 
-- [ ] RecoilRoot
+- [x] RecoilRoot
   - [ ] initializeState
   - [ ] override
-  - [ ] Support multiple & nested `<RecoilRoot />`s
 - [x] Atom
   - [x] Lazy Initialization
-- [ ] Selector
+- [x] Selector
   - [x] Readonly Selector
   - [x] Writable Selector
-  - [x] Reset Selector
-- [x] Hooks
+  - [ ] Reset Selector
+- [ ] Hooks
   - [x] useRecoilState()
   - [x] useSetRecoilState()
   - [x] useRecoilValue()
-  - [x] useResetRecoilState()
+  - [ ] useResetRecoilState()
 - [x] IsRecoilValue()
 - [ ] Unit Tests
 
