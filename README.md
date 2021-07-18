@@ -6,7 +6,9 @@ A Naive [Recoil](https://github.com/facebookexperimental/Recoil) Implementation.
 
 ## Getting Started
 
-## TODOs
+WIP...
+
+## Features
 
 - [x] RecoilRoot
   - [ ] initializeState
@@ -18,7 +20,7 @@ A Naive [Recoil](https://github.com/facebookexperimental/Recoil) Implementation.
   - [x] Readonly Selector
   - [x] Writable Selector
   - [ ] Reset Selector
-  - [ ] selectorFamily()
+  - [x] selectorFamily()
 - [ ] Hooks
   - [x] useRecoilState()
   - [x] useSetRecoilState()
@@ -27,7 +29,7 @@ A Naive [Recoil](https://github.com/facebookexperimental/Recoil) Implementation.
 - [x] IsRecoilValue()
 - [ ] Unit Tests
 
-## Possibly will do, one day in the future...
+## Good to Have
 
 - Snapshot
 - Loadable
