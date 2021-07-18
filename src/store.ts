@@ -7,11 +7,12 @@ import {
   Selector,
   Setter,
   ListenerCallback,
+  StateFamily,
 } from './types'
-import { isAtom, isSelector } from './utils'
+import { DEFAULT_INDEX, isAtom, isSelector } from './utils'
 
 class RecoilStore {
-  private map: Map<RecoilKey, RecoilState<any>> = new Map()
+  private map: Map<RecoilKey, StateFamily<any>> = new Map()
 
   private initialize = <T>(rv: RecoilValue<T>): T => {
     if (isAtom(rv)) {
@@ -34,17 +35,30 @@ class RecoilStore {
   }
 
   private register<T>(rv: RecoilValue<T>): RecoilState<T> {
-    const { key } = rv
     const value = this.initialize(rv)
     const state = new RecoilState(value)
-    this.map.set(key, state)
     return state
   }
 
   public getState = <T>(rv: RecoilValue<T>): RecoilState<T> => {
-    const state = this.map.get(rv.key)
-    if (state) return state
-    return this.register(rv)
+    const { key, index: _index } = rv
+
+    let index = _index || DEFAULT_INDEX
+    let family = this.map.get(key)
+
+    if (!family) {
+      family = new Map()
+      this.map.set(key, family)
+    }
+
+    let state = family.get(index)
+
+    if (!state) {
+      state = this.register(rv)
+      family.set(index, state)
+    }
+
+    return state
   }
 
   public getValue = <T>(rv: RecoilValue<T>): T => {

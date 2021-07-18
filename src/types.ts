@@ -1,3 +1,4 @@
+import RecoilState from './state'
 import RecoilStore from './store'
 
 export interface RecoilStoreRef {
@@ -6,17 +7,20 @@ export interface RecoilStoreRef {
 
 export type RecoilKey = string
 
+export type RecoilFamilyIndex = unknown
+
 export enum RecoilValueType {
   ATOM = 'ATOM',
   SELECTOR = 'SELECTOR',
 }
 
-export interface RecoilValueInterface {
+export interface RecoilValueInterface<Index> {
   key: RecoilKey
   type: RecoilValueType
+  index?: Index
 }
 
-export interface Atom<T> extends RecoilValueInterface {
+export interface Atom<T, I = unknown> extends RecoilValueInterface<I> {
   default: T
   type: RecoilValueType.ATOM
 }
@@ -36,13 +40,13 @@ export interface SelectorSetProps {
 export type SelectorGet<T> = ({ get }: SelectorGetProps) => T
 export type SelectorSet<T> = ({ get, set }: SelectorSetProps, value: T) => void
 
-export interface Selector<T> extends RecoilValueInterface {
+export interface Selector<T, I = unknown> extends RecoilValueInterface<I> {
   type: RecoilValueType.SELECTOR
   get: SelectorGet<T>
   set?: SelectorSet<T>
 }
 
-export type RecoilValue<T> = Atom<T> | Selector<T>
+export type RecoilValue<T, I = unknown> = Atom<T, I> | Selector<T, I>
 
 export interface AtomProps<T> {
   key: RecoilKey
@@ -58,3 +62,7 @@ export interface SelectorProps<T> {
 export type Setter<T> = (value: T | ((value: T) => T)) => void
 
 export type ListenerCallback<T> = (() => void) | ((value: T) => void)
+
+export type StateFamily<T> = Map<RecoilFamilyIndex, RecoilState<T>>
+
+export type FamilyGenerator<T> = (index: RecoilFamilyIndex) => RecoilValue<T>

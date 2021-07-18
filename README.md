@@ -13,10 +13,12 @@ A Naive [Recoil](https://github.com/facebookexperimental/Recoil) Implementation.
   - [ ] override
 - [x] Atom
   - [x] Lazy Initialization
+  - [x] atomFamily()
 - [x] Selector
   - [x] Readonly Selector
   - [x] Writable Selector
   - [ ] Reset Selector
+  - [ ] selectorFamily()
 - [ ] Hooks
   - [x] useRecoilState()
   - [x] useSetRecoilState()
@@ -27,8 +29,6 @@ A Naive [Recoil](https://github.com/facebookexperimental/Recoil) Implementation.
 
 ## Possibly will do, one day in the future...
 
-- atomFamily()
-- selectorFamily()
 - Snapshot
 - Loadable
 - Async Selector

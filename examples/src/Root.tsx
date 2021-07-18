@@ -1,10 +1,21 @@
 import React from 'react'
-import { useRecoilValue, atom, selector } from '../../src'
-import { useRecoilState, useSetRecoilState } from '../../src/hooks'
+import {
+  atom,
+  atomFamily,
+  selector,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from '../../src'
 
 const AtomI = atom({
   key: 'I',
   default: 1,
+})
+
+const familyV = atomFamily({
+  key: 'V',
+  default: 5,
 })
 
 const SelectorII = selector<number>({
@@ -58,6 +69,17 @@ const ChildIV: React.FC = () => {
   return <li>{value}</li>
 }
 
+const ChildV: React.FC = () => {
+  const [value, setValue] = useRecoilState(familyV(0))
+  console.log('<ChildV /> was rendered!')
+  return (
+    <li>
+      {value}
+      <button onClick={() => setValue(v => v + 1)}>Increment</button>
+    </li>
+  )
+}
+
 const Root: React.FC = () => {
   console.log('<Root /> was rendered!')
   const set = useSetRecoilState(AtomI)
@@ -71,6 +93,7 @@ const Root: React.FC = () => {
         <ChildII />
         <ChildIII />
         <ChildIV />
+        <ChildV />
       </ul>
     </>
   )

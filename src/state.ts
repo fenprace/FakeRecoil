@@ -5,8 +5,9 @@ class RecoilState<T = unknown, Index = unknown> {
   private familyIndex?: Index
   private listeners: ListenerCallback<T>[] = []
 
-  constructor(value: T) {
+  constructor(value: T, index?: Index) {
     this._value = value
+    this.familyIndex = index
   }
 
   public on(cb: ListenerCallback<T>): void {
