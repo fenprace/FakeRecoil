@@ -1,6 +1,6 @@
 {
   "name": "fake-recoil",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A Naive Recoil Implementation",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
