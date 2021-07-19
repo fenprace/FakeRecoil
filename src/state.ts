@@ -1,13 +1,11 @@
 import { ListenerCallback } from './types'
 
-class RecoilState<T = unknown, Index = unknown> {
+class RecoilState<T = unknown> {
   private _value: T
-  private familyIndex?: Index
   private listeners: ListenerCallback<T>[] = []
 
-  constructor(value: T, index?: Index) {
+  constructor(value: T) {
     this._value = value
-    this.familyIndex = index
   }
 
   public on(cb: ListenerCallback<T>): void {

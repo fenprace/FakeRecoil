@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "prepublishOnly": "pnpm lint && pnpm test && pnpm build",
     "build": "rimraf ./dist && tsc --build",
     "clean": "rimraf ./dist",
     "lint": "eslint --fix .",

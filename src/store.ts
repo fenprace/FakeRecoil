@@ -43,7 +43,7 @@ class RecoilStore {
   public getState = <T>(rv: RecoilValue<T>): RecoilState<T> => {
     const { key, index: _index } = rv
 
-    let index = _index || DEFAULT_INDEX
+    const index = _index || DEFAULT_INDEX
     let family = this.map.get(key)
 
     if (!family) {
