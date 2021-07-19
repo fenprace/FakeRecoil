@@ -4,7 +4,7 @@ import RecoilStore from '../store'
 import { RecoilValue, Setter } from '../types'
 
 export const useRecoilStore = (): RecoilStore => {
-  return useContext(RecoilContext).current
+  return useContext(RecoilContext)
 }
 
 export const useRecoilValue = <T>(rv: RecoilValue<T>): T => {

@@ -1,9 +1,4 @@
 import RecoilState from './state'
-import RecoilStore from './store'
-
-export interface RecoilStoreRef {
-  current: RecoilStore
-}
 
 export type RecoilKey = string
 

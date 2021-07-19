@@ -1,9 +1,6 @@
 import React from 'react'
-import { defaultStore } from './store'
-import { RecoilStoreRef } from './types'
+import RecoilStore, { defaultStore } from './store'
 
-const RecoilContext = React.createContext<RecoilStoreRef>({
-  current: defaultStore,
-})
+const RecoilContext = React.createContext<RecoilStore>(defaultStore)
 
 export default RecoilContext

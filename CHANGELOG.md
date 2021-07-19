@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.3] - 2021-07-20
+
+### Fixed
+
+- Now each `<RecoilRoot>` creates its own store, instead of sharing a common
+  store instance.
+
 ## [0.1.2] - 2021-07-20
 
 ### Changed

@@ -1,6 +1,6 @@
-import React, { useRef } from 'react'
+import React, { useState } from 'react'
 import RecoilContext from './context'
-import { defaultStore } from './store'
+import RecoilStore from './store'
 
 interface RecoilRootProps {
   children: React.ReactNode
@@ -9,8 +9,11 @@ interface RecoilRootProps {
 const RecoilRoot: React.FC<RecoilRootProps> = ({
   children,
 }: RecoilRootProps) => {
-  const ref = useRef(defaultStore)
-  return <RecoilContext.Provider value={ref}>{children}</RecoilContext.Provider>
+  const [store] = useState(() => new RecoilStore())
+
+  return (
+    <RecoilContext.Provider value={store}>{children}</RecoilContext.Provider>
+  )
 }
 
 export default RecoilRoot
